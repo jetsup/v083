@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090B10">
+<title>V380 Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C8CFF'/%3E%3Cstop offset='1' stop-color='%23B26CFF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='40' height='40' rx='12' fill='url(%23g)'/%3E%3Ccircle cx='20' cy='20' r='10' fill='none' stroke='white' stroke-width='3'/%3E%3Ccircle cx='20' cy='20' r='3.4' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="shell" id="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 40 40" width="40" height="40"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C8CFF"/><stop offset="1" stop-color="#B26CFF"/></linearGradient></defs><rect width="40" height="40" rx="12" fill="url(#lg)"/><circle cx="20" cy="20" r="10" fill="none" stroke="#fff" stroke-width="3" opacity=".94"/><circle cx="20" cy="20" r="3.4" fill="#fff" opacity=".94"/></svg></div>
+      <div><div class="brand-name">V380 Studio</div><div class="brand-sub">Camera control</div></div>
+    </div>
+    <div class="eyebrow nav-label">Workspace</div>
+    <nav class="nav">
+      <button class="nav-btn active" data-view="cameras"><span data-ic="grid"></span>Cameras</button>
+      <button class="nav-btn" data-view="devices"><span data-ic="devices"></span>All devices</button>
+    </nav>
+    <div class="spacer"></div>
+    <div class="netcard" id="netcard">
+      <div class="net-top"><span class="dot" id="netdot"></span><b id="nettitle">Idle</b></div>
+      <div class="faint" id="netsub">Not scanned yet</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- Cameras -->
+    <section class="view active" id="view-cameras">
+      <header class="page-head">
+        <div>
+          <div class="eyebrow">Your network</div>
+          <h1>Cameras</h1>
+          <p class="muted" id="cam-sub">Scanning for cameras on your network…</p>
+        </div>
+        <button class="btn primary" id="scan-btn"><span data-ic="radar"></span><span id="scan-label">Scan network</span></button>
+      </header>
+      <div class="progress"><i id="progress-bar"></i></div>
+      <div id="cam-empty" class="empty">
+        <div class="radar" id="radar"><i></i><i></i><i></i><i></i><span class="sweep"></span><span class="blip b1"></span><span class="blip b2"></span><span class="blip b3"></span><span class="core"></span></div>
+        <h3 id="empty-title">Looking for cameras…</h3>
+        <p class="muted" id="empty-sub">Make sure the camera is powered on and on the same Wi-Fi.</p>
+      </div>
+      <div class="grid" id="cam-grid" hidden></div>
+    </section>
+
+    <!-- Devices -->
+    <section class="view" id="view-devices">
+      <header class="page-head">
+        <div>
+          <div class="eyebrow">On your network</div>
+          <h1>All devices</h1>
+          <p class="muted" id="dev-sub">Run a scan to list every device that answered.</p>
+        </div>
+      </header>
+      <div class="rows" id="dev-rows"></div>
+    </section>
+
+    <!-- Viewer -->
+    <section class="view" id="view-viewer">
+      <header class="viewer-bar">
+        <button class="btn icon" id="v-back" title="Back" data-ic="back"></button>
+        <div class="v-title"><b id="v-name"></b><span class="muted" id="v-meta"></span></div>
+        <div class="state"><span class="dot" id="v-dot"></span><span id="v-state" class="muted">Connecting</span></div>
+        <div class="spacer"></div>
+        <div class="seg" role="tablist">
+          <button class="seg-btn active" id="seg-raw">Raw fisheye</button>
+          <button class="seg-btn" id="seg-flat"><span data-ic="globe" data-size="15"></span>Dewarped</button>
+        </div>
+        <button class="btn ghost" id="v-snap"><span data-ic="camera" data-size="17"></span><span class="hide-sm">Snapshot</span></button>
+        <button class="btn icon" id="v-full" title="Fullscreen (F)" data-ic="expand"></button>
+        <button class="btn icon danger" id="v-forget" title="Forget saved login" data-ic="trash"></button>
+      </header>
+      <div class="viewer-body">
+        <div class="stage" id="stage">
+          <img id="v-img" alt="Live camera view" draggable="false">
+          <div class="stage-msg" id="v-msg"><div><b>Connecting…</b><span>Opening a secure session with the camera</span></div></div>
+          <div class="hud"><span id="v-hud"></span></div>
+        </div>
+        <aside class="lens" id="lens" hidden>
+          <div class="lens-head"><span data-ic="sliders" data-size="18"></span><b>Virtual lens</b></div>
+          <p class="faint">Drag the picture to look around, scroll to zoom.</p>
+          <label class="sl"><span>Pan</span><output id="o-yaw">0°</output><input type="range" id="s-yaw" min="-180" max="180" value="0"></label>
+          <label class="sl"><span>Tilt</span><output id="o-pitch">50°</output><input type="range" id="s-pitch" min="-89" max="89" value="50"></label>
+          <label class="sl"><span>Rotate</span><output id="o-roll">0°</output><input type="range" id="s-roll" min="-180" max="180" value="0"></label>
+          <label class="sl"><span>Field of view</span><output id="o-fov">100°</output><input type="range" id="s-fov" min="40" max="150" value="100"></label>
+          <button class="btn ghost wide" id="v-reset"><span data-ic="refresh" data-size="16"></span>Reset view</button>
+        </aside>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Login modal -->
+<div class="modal" id="modal" hidden>
+  <form class="sheet" id="login-form" autocomplete="off">
+    <div class="sheet-top">
+      <div class="badge" data-ic="lock" data-size="24"></div>
+      <button type="button" class="btn icon" id="m-close" data-ic="x" data-size="16"></button>
+    </div>
+    <h2>Sign in to camera</h2>
+    <p class="muted" id="m-sub"></p>
+    <div class="field" id="f-id" hidden><label><span data-ic="id" data-size="14"></span>Camera ID</label><input id="in-id" inputmode="numeric" placeholder="8-digit ID shown in the V380 app"></div>
+    <div class="field"><label><span data-ic="user" data-size="14"></span>Username</label><input id="in-user" value="admin" autocomplete="off"></div>
+    <div class="field"><label><span data-ic="key" data-size="14"></span>Password</label>
+      <div class="pw"><input id="in-pw" type="password" placeholder="Camera password" autocomplete="new-password"><button type="button" id="pw-eye" class="eye" data-ic="eye" data-size="18" title="Show password"></button></div>
+    </div>
+    <label class="check"><input type="checkbox" id="in-remember" checked><i></i>Remember on this computer</label>
+    <p class="faint" id="m-hint"></p>
+    <p class="error" id="m-err" hidden></p>
+    <div class="sheet-actions">
+      <button type="button" class="btn ghost" id="m-cancel">Cancel</button>
+      <button type="submit" class="btn primary grow" id="m-go">Connect <span data-ic="arrow" data-size="16"></span></button>
+    </div>
+  </form>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="icons.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
